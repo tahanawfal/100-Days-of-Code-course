@@ -26,7 +26,7 @@ def hit_stand_choices(turn):
             print("Invalid input")
             hit_stand_choices(turn)
     else:
-        if computer_score > 14:
+        if computer_score > 17:
             computer_hit_flag = False
 
 def deck_shuffle(turn):
@@ -94,6 +94,9 @@ while start_play == "y":
     start_play = input("Do you want to play a game of Blackjack? Type 'y' or 'n': ").lower()
     if start_play == "y":
         start_game()
+        if my_score == 21:
+            announce_winner()
+            break
     else:
         print("Thank you")
         break
