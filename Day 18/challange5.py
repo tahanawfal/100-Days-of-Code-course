@@ -11,4 +11,13 @@ def random_color():
     return color
 
 ########### Challenge 5 - Spirograph ########
+tim.speed("fastest")
+gap_size = 5
 
+for angle in range(int(360/gap_size)):
+    tim.color(random_color())
+    tim.circle(100)
+    tim.setheading(tim.heading() + gap_size)
+
+screen = t.Screen()
+screen.exitonclick()
