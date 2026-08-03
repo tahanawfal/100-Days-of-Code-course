@@ -1,5 +1,5 @@
-from turtle import Turtle, Screen
 import random
+from turtle import Screen, Turtle
 
 is_race_on = False
 screen = Screen()
@@ -10,7 +10,7 @@ y_positions = [-70, -40, -10, 20, 50, 80]
 all_turtles = []
 
 #Create 6 turtles
-for turtle_index in range(0, 6):
+for turtle_index in range(6):
     new_turtle = Turtle(shape="turtle")
     new_turtle.penup()
     new_turtle.color(colors[turtle_index])
