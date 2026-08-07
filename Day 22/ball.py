@@ -2,9 +2,6 @@ from turtle import Turtle
 
 ball_width = 20
 ball_height = 20
-x_start = 0
-y_start = 0
-ball_distance = 1
 
 class Ball(Turtle):
 
@@ -13,17 +10,23 @@ class Ball(Turtle):
         self.shape("circle")
         self.color("white") 
         self.penup()
+        self.move_speed = 0.01
+        self.x_diraction = 1
+        self.y_diraction = 1
 
-    def move(self, x_dim, y_dim):
-        if self.ycor() < (y_dim/2) and self.ycor() > (y_dim/-2):
-            new_x = self.xcor() + 1
-            new_y = self.ycor() + 1
-            self.goto(new_x, new_y)
-        else:
+    def move(self):
+        new_x = self.xcor() + self.x_diraction
+        new_y = self.ycor() + self.y_diraction
+        self.goto(new_x, new_y)
 
+    def bounce_y(self):
+        self.y_diraction *= -1
+            
+    def bounce_x(self):
+        self.x_diraction *= -1
+        self.move_speed *= 0.9
 
-    def bounce_logic(self, y_dim):
-        if self.ycor() < (y_dim/2) and self.ycor() > (y_dim/-2):
-            ball_distance = 1 * ball_distance
-        else:
-            ball_distance = -1 * ball_distance
+    def reset_position(self):
+        self.goto((0,0))
+        self.bounce_x()
+        self.move_speed = 0.01
