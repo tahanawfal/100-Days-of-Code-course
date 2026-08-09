@@ -8,20 +8,20 @@ class Scoreboard(Turtle):
     def __init__(self):
         super().__init__()
         self.level = 1
-        self.score = f"Level: {self.level}"
-        self.show_level()
-
-    def show_level(self):
         self.color("black")
         self.penup()
         self.hideturtle()
         self.goto(-280,250)
-        self.write(self.score, align="left", font=FONT)
+        self.update_scoreboard()
+
+    def update_scoreboard(self):
+        self.clear()
+        self.write(f"Level: {self.level}", align="left", font=FONT)
 
     def increase_level(self):
-        self.clear()
         self.level += 1
-        self.show_level()
+        self.update_scoreboard()
 
     def game_over(self):
-        print("meow")
+        self.goto((0,0))
+        self.write("Game Over", align="left", font=FONT)
