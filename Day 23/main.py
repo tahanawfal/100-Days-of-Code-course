@@ -23,13 +23,15 @@ while game_is_on:
     car_manager.move()    
     
     # when turtle finish the y line
-    if player.ycor() >= player.finish_line_y:
+    if player.is_at_finish_line():
         player.reset_position()
         scoreboard.increase_level()
         car_manager.increase_speed()
         
     # When the turtle collides with a car
     for car in car_manager.all_cars:
-        if abs(car.xcor() - player.xcor()) <= 1 and abs(car.ycor() - player.ycor()) <= 2:
+        if car.distance(player) < 20:
             scoreboard.game_over()
             game_is_on = False
+
+screen.exitonclick()
