@@ -1,4 +1,4 @@
-from random import choice, randint, shuffle
+from random import choice
 from tkinter import *
 from tkinter import messagebox
 import pandas as pd
