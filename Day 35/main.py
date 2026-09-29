@@ -1,12 +1,15 @@
 import os
 
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # -----------------------------
 # OpenWeather
 # -----------------------------
 owm_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
-owm_api_key = os.environ.get("OWM_API_KEY")
+owm_api_key = os.getenv("OWM_API_KEY")
 
 parameters = {
     "lat": 14.073080,
@@ -38,8 +41,8 @@ for hour_data in data["list"]:
 # Send Telegram message
 # -----------------------------
 def send_telegram_message(message):
-    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
     telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
