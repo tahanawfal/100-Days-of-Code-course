@@ -1,19 +1,18 @@
-#This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
-# from flight_search import FlightSearch
+from data_manager import DataManager
+from flight_data import FlightData
+from flight_search import FlightSearch
+from notification_manager import NotificationManager
 
-# airports = ['KUL', 'LGK', 'GYD', 'TBS', 'BUS', 'DPS', 'CGK', 'BKK', 'HKT', 'CMB', 'MNL', 'CEB', 'PPS', 'ENI', 'ZNZ', 'HAN', 'SGN', 'DAD', 'KTM', 'PKR', 'ALA']
-# prices = []
-
-# for airport in airports:
-#   flight_search = FlightSearch("BGW", airport)
-#   prices = prices.append({
-#     "airport": airport,
-#     "price": flight_search
-#   })
-
-# print(prices)
-
-from test import FlightSearch
 flight_search = FlightSearch()
+flight_data = FlightData(flight_search.raw_data)
+data_manager = DataManager()
 
-flight_search.formatted_list()
+for deal in flight_data.price_list:
+    old_data = data_manager.get_sheet(deal)
+    # print(deal, old_data)
+    if old_data:
+        if int(deal["price"]) < int(old_data["price"]):
+            NotificationManager(deal["price"], deal["city"], deal["arrivalAirportCode"], deal["country"])
+        data_manager.put_sheet(deal, old_data["id"])
+    else:
+        data_manager.post_sheet(deal)
