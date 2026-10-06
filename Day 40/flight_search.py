@@ -1,39 +1,34 @@
 import os
-import requests
+from datetime import datetime, timedelta
+
+import requests_cache
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
-
-SERPAPI_ENDPOINT = "https://serpapi.com/search"
-
+session = requests_cache.CachedSession("serp_cache", expire_after=3600)
 
 class FlightSearch:
-
+    # 1. This class is responsible for talking to the Flight Search API.
     def __init__(self):
-        self._api_key = os.environ["SERPAPI_API_KEY"]
-
-    def check_flights(self, origin_city_code, destination_city_code, from_time, to_time):
-        query = {
-            "engine": "google_flights",
-            "departure_id": origin_city_code,
-            "arrival_id": destination_city_code,
-            "outbound_date": from_time.strftime("%Y-%m-%d"),
-            "return_date": to_time.strftime("%Y-%m-%d"),
-            "type": "1",
-            "adults": "1",
-            "currency": "GBP",
-            "api_key": self._api_key,
-        }
-
-        response = requests.get(url=SERPAPI_ENDPOINT, params=query)
-
-        if response.status_code != 200:
-            print(f"check_flights() response code: {response.status_code}")
-            return None
-
-        data = response.json()
-        if "error" in data:
-            print(f"API error: {data['error']}")
-            return None
-        return data
+        departure_id = "BGW"
+        FLIGHT_APP_KEY = os.getenv("SERP_API_KEY")
+        tomorrow = datetime.now() + timedelta(days=1)  # noqa: DTZ005
+        six_month_later = datetime.now() + timedelta(days=6 * 30)  # noqa: DTZ005
+        date_range = f"{tomorrow.strftime("%Y-%m-%d")},{six_month_later.strftime("%Y-%m-%d")}"
+        self.serp_endpoint = "https://serpapi.com/search?engine=google_flights_deals"
+        self.search_parameters = {
+            "engine": "google_flights_deals",
+            "hl": "en",
+            "gl": "iq",
+            "type": "2",
+            "currency": "USD",
+            "api_key": FLIGHT_APP_KEY,
+            "departure_id": departure_id,
+            "outbound_date": date_range
+            }
+        
+    def bring_deals(self):
+        r = session.get(url=self.serp_endpoint, params=self.search_parameters)
+        r.raise_for_status()
+        self.raw_data = r.json()
+        return self.raw_data

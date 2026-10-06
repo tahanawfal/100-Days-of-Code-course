@@ -1,37 +1,25 @@
-import os
 import requests
-from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
-SHEETY_PRICES_ENDPOINT = os.environ["SHEETY_PRICES_ENDPOINT"]
-
 class DataManager:
-
+    # 3. This class is responsible for talking to the Google Sheet.
     def __init__(self):
-        self._user = os.environ["SHEETY_USERNAME"]
-        self._password = os.environ["SHEETY_PASSWORD"]
-        self._authorization = HTTPBasicAuth(self._user, self._password)
-        self.destination_data = {}
+      self.sheety_endpoint = "https://api.sheety.co/51a228bf37f5604377e0c44ed751e5c7/flightTracker/airports"
+    
+    def get_sheet(self, data):
+      r = requests.get(url=self.sheety_endpoint,  params={"filter[arrivalAirportCode]": data["arrivalAirportCode"]})
+      r.raise_for_status()
+      rows = r.json()["airports"]
+      return rows[0] if rows else None
 
-    def get_destination_data(self):
-        response = requests.get(url=SHEETY_PRICES_ENDPOINT, auth=self._authorization)
-        data = response.json()
-        self.destination_data = data["prices"]
-        return self.destination_data
+    def post_sheet(self, data):
+      r = requests.post(url=self.sheety_endpoint, json={"airport": data})
+      r.raise_for_status()
+      return r.json()["airport"]
 
-    # ==================== Updated the price in the spreadsheet ====================
-
-    def update_lowest_price(self, row_id, new_price):
-        new_data = {
-            "price": {
-                "lowestPrice": new_price
-            }
-        }
-        requests.put(
-            url=f"{SHEETY_PRICES_ENDPOINT}/{row_id}",
-            json=new_data,
-            auth=self._authorization
-        )
+    def put_sheet(self, data, row_id):
+      r = requests.put(url=f"{self.sheety_endpoint}/{row_id}", json={"airport": data})
+      r.raise_for_status()
+      return r.json()["airport"]

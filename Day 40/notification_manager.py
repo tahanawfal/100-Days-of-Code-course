@@ -1,28 +1,25 @@
 import os
-from twilio.rest import Client
 
-# Using a .env file to retrieve the phone numbers and tokens.
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class NotificationManager:
-
+    # 4. This class is responsible for sending notifications with the deal flight details.
     def __init__(self):
-        self.client = Client(os.environ['TWILIO_SID'], os.environ["TWILIO_AUTH_TOKEN"])
-
-    def send_sms(self, message_body):
-        message = self.client.messages.create(
-            from_=os.environ["TWILIO_VIRTUAL_NUMBER"],
-            body=message_body,
-            to=os.environ["TWILIO_VERIFIED_NUMBER"]
-        )
-        # Prints if successfully sent.
-        print(message.sid)
-
-    # Is SMS not working for you or prefer whatsapp? Connect to the WhatsApp Sandbox!
-    # https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn
-    def send_whatsapp(self, message_body):
-        message = self.client.messages.create(
-            from_=f'whatsapp:{os.environ["TWILIO_WHATSAPP_NUMBER"]}',
-            body=message_body,
-            to=f'whatsapp:{os.environ["TWILIO_VERIFIED_NUMBER"]}'
-        )
-        print(message.sid)
+        
+        BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+        self.CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+        self.telegram_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    
+    def formatted_message(self, price, city, airport_code, country):
+        return f"Low price alert! Only ${price} to fly from Baghdad-BGW to {city}-{airport_code} at {country}"
+        
+    def send_message(self, message):
+        self.parameters = {
+            "chat_id": self.CHAT_ID,
+            "text": message
+        }
+        response = requests.get(url=self.telegram_url, params=self.parameters)
+        response.raise_for_status()
