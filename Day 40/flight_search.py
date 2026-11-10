@@ -12,8 +12,8 @@ class FlightSearch:
     def __init__(self):
         departure_id = "BGW"
         FLIGHT_APP_KEY = os.getenv("SERP_API_KEY")
-        tomorrow = datetime.now() + timedelta(days=1)  # noqa: DTZ005
-        six_month_later = datetime.now() + timedelta(days=6 * 30)  # noqa: DTZ005
+        tomorrow = datetime.now() + timedelta(days=1)
+        six_month_later = datetime.now() + timedelta(days=6 * 30)
         date_range = f"{tomorrow.strftime("%Y-%m-%d")},{six_month_later.strftime("%Y-%m-%d")}"
         self.serp_endpoint = "https://serpapi.com/search?engine=google_flights_deals"
         self.search_parameters = {
@@ -27,8 +27,6 @@ class FlightSearch:
             "outbound_date": date_range
             }
         
-    def bring_deals(self):
         r = session.get(url=self.serp_endpoint, params=self.search_parameters)
         r.raise_for_status()
         self.raw_data = r.json()
-        return self.raw_data
